@@ -31,6 +31,7 @@ export function Plot() {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    console.time("plot");
     const newPlot = plot({
       y: { grid: true },
       marks: [
@@ -43,6 +44,7 @@ export function Plot() {
       ],
     });
     containerRef.current.append(newPlot);
+    console.timeEnd("plot");
     return () => {
       newPlot.remove();
     };
