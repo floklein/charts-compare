@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Chart, ChartDataset, registerables } from "chart.js";
-import "chartjs-scale-timestack";
 import zoomPlugin from "chartjs-plugin-zoom";
+import "chartjs-scale-timestack";
+import { styled } from "@mui/material";
 
 Chart.register(...registerables, zoomPlugin);
 
@@ -20,13 +21,19 @@ function createData() {
   return data;
 }
 
-function createLine(): ChartDataset<"line"> {
+function createLine(yAxisID: string): ChartDataset<"line"> {
   return {
     label: "",
     data: createData(),
     pointStyle: false,
+    yAxisID,
   };
 }
+
+const Container = styled("div")({
+  position: "relative",
+  height: 250,
+});
 
 export function ChartJS() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -35,11 +42,12 @@ export function ChartJS() {
     if (!canvasRef.current) return;
     console.time("chartjs");
     const datasets = [
-      createLine(),
-      createLine(),
-      createLine(),
-      createLine(),
-      createLine(),
+      createLine("y1"),
+      createLine("y1"),
+      createLine("y1"),
+      createLine("y2"),
+      createLine("y2"),
+      createLine("y2"),
     ];
     const chart = new Chart(canvasRef.current, {
       type: "line",
@@ -47,10 +55,26 @@ export function ChartJS() {
         datasets,
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        locale: navigator.language,
         scales: {
           x: {
-            type: "timestack",
+            type: "timestack" as "time",
           },
+          y1: {
+            type: "linear",
+            position: "left",
+          },
+          y2: {
+            type: "linear",
+            position: "left",
+          },
+        },
+        interaction: {
+          intersect: false,
+          mode: "x",
         },
         plugins: {
           zoom: {
@@ -77,5 +101,9 @@ export function ChartJS() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} />;
+  return (
+    <Container>
+      <canvas ref={canvasRef} />
+    </Container>
+  );
 }

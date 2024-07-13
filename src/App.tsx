@@ -11,10 +11,11 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import { ChartJS } from "./components/ChartJS.tsx";
 import { useCallback, useState } from "react";
 import { Plot } from "./components/Plot.tsx";
+import { Add, Remove } from "@mui/icons-material";
 
 export function App() {
-  const [library, setLibrary] = useState<"plot" | "chartjs">("plot");
-  const [widgets, setWidgets] = useState<number[]>([]);
+  const [library, setLibrary] = useState<"plot" | "chartjs">("chartjs");
+  const [widgets, setWidgets] = useState<number[]>([0, 1, 2, 3, 4, 5]);
 
   const changeLibrary = useCallback(
     (newLibrary: "plot" | "chartjs") => () => {
@@ -22,6 +23,10 @@ export function App() {
     },
     [],
   );
+
+  const removeWidget = useCallback(() => {
+    setWidgets((widgets) => widgets.slice(0, widgets.length - 1));
+  }, []);
 
   const addWidget = useCallback(() => {
     setWidgets((widgets) => [...widgets, widgets.length]);
@@ -31,7 +36,7 @@ export function App() {
     <>
       <AppBar position="sticky">
         <Toolbar>
-          <Typography variant="h6">Reports</Typography>
+          <Typography variant="h6">Report</Typography>
         </Toolbar>
       </AppBar>
       <Container>
@@ -50,9 +55,19 @@ export function App() {
               ChartJS
             </Button>
           </ButtonGroup>
-          <Button variant="contained" onClick={addWidget}>
-            Add widget
-          </Button>
+          <ButtonGroup>
+            <Button
+              variant="contained"
+              onClick={removeWidget}
+              disabled={widgets.length === 0}
+            >
+              <Remove />
+            </Button>
+            <Button disabled>{widgets.length}</Button>
+            <Button variant="contained" onClick={addWidget}>
+              <Add />
+            </Button>
+          </ButtonGroup>
         </Toolbar>
         <div>
           <Grid2 container spacing={2}>
